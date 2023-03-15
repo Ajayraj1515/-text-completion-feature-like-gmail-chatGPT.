@@ -1,0 +1,41 @@
+from flask import Flask, request, jsonify
+import openai
+import json
+
+app = Flask(__name__)
+
+# Set up OpenAI API key
+openai.api_key = "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"
+
+@app.route('/api/gpt-completion', methods=['POST'])
+def gpt_completion():
+    # Get input text from the request
+    input_text = request.json['input_text']
+
+    # Set up prompt and completion parameters
+    prompt = input_text + " "
+    model = "text-davinci-002"
+    temperature = 0.7
+    max_tokens = 50
+
+    # Call OpenAI's completion API
+    response = openai.Completion.create(
+        engine=model,
+        prompt=prompt,
+        temperature=temperature,
+        max_tokens=max_tokens
+    )
+
+    # Get the generated text from the response
+    generated_text = response.choices[0].text.strip()
+
+    # Save the chat log to a markdown file
+    with open("chat_log.md", "a") as f:
+        f.write(f"Input: {input_text}\n")
+        f.write(f"Output: {generated_text}\n\n")
+
+    # Return the generated text as a response
+    return jsonify({'generated_text': generated_text})
+
+if __name__ == '__main__':
+    app.run(debug=True)
