@@ -1,0 +1,24 @@
+import requests
+import json
+
+# Define the URL for the Flask endpoint
+url = "http://localhost:5000/api/gpt-completion"
+
+# Define the input text as a dictionary in JSON format
+input_text = {"input_text": "Hello, how are you?"}
+
+# Send a POST request to the Flask endpoint with the input text
+response = requests.post(url, json=input_text)
+
+# Check if the response status code is OK
+if response.status_code == 200:
+    try:
+        # Try to decode the JSON response
+        generated_text = response.json()['generated_text']
+        print(generated_text)
+    except json.decoder.JSONDecodeError as e:
+        # Print the exception message if the JSON decode fails
+        print(f"JSON decode error: {e.msg}")
+else:
+    # Print an error message if the response status code is not OK
+    print(f"Error: {response.status_code}")
